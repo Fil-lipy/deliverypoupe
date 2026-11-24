@@ -11,6 +11,7 @@ export interface AdminSection {
 // All manageable admin sections (used for the permissions editor).
 export const ADMIN_SECTIONS: AdminSection[] = [
   { key: 'dashboard', label: 'Dashboard' },
+  { key: 'pedidos', label: 'Pedidos (retaguarda)' },
   { key: 'produtos', label: 'Produtos' },
   { key: 'relacionados', label: 'Produtos relacionados (cross-sell)' },
   { key: 'categorias', label: 'Categorias' },

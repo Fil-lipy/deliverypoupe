@@ -6,10 +6,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/logo';
 import { canAccess } from '@/lib/permissions';
-import { LayoutDashboard, Package, Grid3X3, Tag, MapPin, ShoppingCart, Users, Settings, LogOut, Menu, X, Link2, Image, BarChart3, ScrollText, ShieldCheck, Plug, Percent } from 'lucide-react';
+import { LayoutDashboard, Package, Grid3X3, Tag, MapPin, ShoppingCart, Users, Settings, LogOut, Menu, X, Link2, Image, BarChart3, ScrollText, ShieldCheck, Plug, Percent, ClipboardList } from 'lucide-react';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, perm: 'dashboard' },
+  { href: '/admin/pedidos', label: 'Pedidos', icon: ClipboardList, perm: 'pedidos' },
   { href: '/admin/produtos', label: 'Produtos', icon: Package, perm: 'produtos' },
   { href: '/admin/relacionados', label: 'Relacionados', icon: Link2, perm: 'relacionados' },
   { href: '/admin/categorias', label: 'Categorias', icon: Grid3X3, perm: 'categorias' },
