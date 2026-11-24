@@ -8,6 +8,7 @@
  * a FK de delivery_pedidos.cliente_id e adicionar cliente_nome/cpf/celular/ref.
  */
 import { Pool } from "pg";
+import { enviarPedidoAoA7Silencioso } from "@/lib/a7-db";
 
 declare global { var _ordersPool: Pool | undefined; }
 
@@ -97,6 +98,9 @@ export async function confirmarPagamento(pedidoId: string, cobrancaId: string) {
   await pool.query(
     "update public.delivery_pedidos set pagamento_status='confirmado', pago_em=now(), status=$2, pagamento_id=$3, updated_at=now() where id=$1",
     [pedidoId, novo, cobrancaId]);
+  // Sem receita → já pode virar orçamento no A7. Com receita, espera a farmacêutica
+  // aprovar (avancarSeReceitaResolvida envia depois). No-op se A7_ENABLED != true.
+  if (novo === "em_separacao") await enviarPedidoAoA7Silencioso(pedidoId);
 }
 
 export async function statusPedido(pedidoId: string) {
@@ -149,5 +153,7 @@ export async function avancarSeReceitaResolvida(pedidoId: string) {
     "select count(*)::int as n from public.delivery_pedido_itens where pedido_id=$1 and exige_receita and status='incluido'", [pedidoId]);
   if (r.rows[0].n === 0) {
     await pool.query("update public.delivery_pedidos set status='em_separacao' where id=$1 and status='em_analise_receita'", [pedidoId]);
+    // Receita resolvida → envia ao A7 só os itens aprovados. No-op se A7_ENABLED != true.
+    await enviarPedidoAoA7Silencioso(pedidoId);
   }
 }
