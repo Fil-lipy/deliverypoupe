@@ -36,6 +36,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (error: any) {
     console.error('Products error:', error);
-    return NextResponse.json({ error: 'Erro ao buscar produtos.' }, { status: 500 });
+    return NextResponse.json({ error: 'Erro ao buscar produtos.', debug: String(error?.message ?? error), code: error?.code ?? null }, { status: 500 });
   }
 }
