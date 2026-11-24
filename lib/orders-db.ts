@@ -14,7 +14,7 @@ declare global { var _ordersPool: Pool | undefined; }
 function db(): Pool {
   if (!global._ordersPool) {
     global._ordersPool = new Pool({
-      connectionString: process.env.SUPABASE_DATABASE_URL,
+      connectionString: process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL,
       ssl: { rejectUnauthorized: false },
       max: 5,
     });

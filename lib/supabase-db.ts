@@ -11,7 +11,7 @@ const globalForPool = globalThis as unknown as { supabasePool: Pool | undefined 
 export const supabasePool =
   globalForPool.supabasePool ??
   new Pool({
-    connectionString: process.env.SUPABASE_DATABASE_URL,
+    connectionString: process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false },
     max: 3,
     idleTimeoutMillis: 10000,
