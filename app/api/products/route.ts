@@ -36,28 +36,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (error: any) {
     console.error('Products error:', error);
-    const used = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL || '';
-    let parsed: any = null;
-    try {
-      const { parse } = require('pg-connection-string');
-      const p = parse(used);
-      const pw = String(p.password ?? '');
-      parsed = {
-        user: p.user ?? null,
-        host: p.host ?? null,
-        port: p.port ?? null,
-        database: p.database ?? null,
-        pw_len: pw.length,
-        pw_alnum: /^[A-Za-z0-9]*$/.test(pw),
-        pw_has_space: /\s/.test(pw),
-      };
-    } catch (_) {}
-    const diag = {
-      hasSupabaseUrl: !!process.env.SUPABASE_DATABASE_URL,
-      hasDatabaseUrl: !!process.env.DATABASE_URL,
-      dbTarget: used ? (used.replace(/\/\/[^@]*@/, '//***@').split('?')[0]) : '(vazio)',
-      parsed,
-    };
-    return NextResponse.json({ error: 'Erro ao buscar produtos.', debug: String(error?.message ?? error), code: error?.code ?? null, diag }, { status: 500 });
+    return NextResponse.json({ error: 'Erro ao buscar produtos.' }, { status: 500 });
   }
 }
