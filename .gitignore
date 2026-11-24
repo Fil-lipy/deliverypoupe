@@ -1,0 +1,20 @@
+# deps / build
+node_modules
+.next
+out
+.vercel
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+.pnp.*
+# env / secrets (NUNCA commitar)
+.env
+.env.*
+!.env.example
+# misc
+*.tsbuildinfo
+.DS_Store
+npm-debug.log*
+yarn-error.log

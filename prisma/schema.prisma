@@ -1,0 +1,266 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DATABASE_DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  cpf       String?  @unique
+  phone     String?
+  birthDate DateTime?
+  role      Role     @default(CUSTOMER)
+  permissions String[] @default([])
+  active    Boolean  @default(true)
+  addresses Address[]
+  carts     Cart[]
+  favorites Favorite[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+model Address {
+  id           String  @id @default(cuid())
+  userId       String
+  user         User    @relation(fields: [userId], references: [id])
+  label        String?
+  street       String
+  number       String
+  complement   String?
+  neighborhood String
+  reference    String?
+  city         String  @default("Parauapebas")
+  state        String  @default("PA")
+  zipCode      String
+  isDefault    Boolean @default(false)
+
+  @@index([userId])
+}
+
+model Cart {
+  id               String       @id @default(cuid())
+  userId           String
+  user             User         @relation(fields: [userId], references: [id])
+  items            CartItem[]
+  couponCode       String?
+  couponType       String?
+  couponValue      Decimal?     @db.Decimal(10, 2)
+  couponMaxDiscount Decimal?    @db.Decimal(10, 2)
+  couponMinOrder   Decimal?     @db.Decimal(10, 2)
+  couponBeneficio  String?
+  deliveryMode     DeliveryMode @default(DELIVERY)
+  neighborhoodId   String?
+  neighborhoodName String?
+  neighborhoodFee  Decimal?     @db.Decimal(10, 2)
+  neighborhoodMin  Decimal?     @db.Decimal(10, 2)
+  neighborhoodFree Decimal?     @db.Decimal(10, 2)
+  addressStreet    String?
+  addressNumber    String?
+  addressComplement String?
+  addressRef       String?
+  paymentMethod    String?
+  notes            String?
+  status           CartStatus   @default(CREATED)
+  whatsappSentAt   DateTime?
+  subtotal         Decimal      @db.Decimal(10, 2) @default(0)
+  discount         Decimal      @db.Decimal(10, 2) @default(0)
+  deliveryFee      Decimal      @db.Decimal(10, 2) @default(0)
+  total            Decimal      @db.Decimal(10, 2) @default(0)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([userId, status])
+}
+
+enum DeliveryMode {
+  DELIVERY
+  PICKUP
+}
+
+enum CartStatus {
+  CREATED
+  SENT_WHATSAPP
+  CONVERTED
+  ABANDONED
+}
+
+model CartItem {
+  id          String  @id @default(cuid())
+  cartId      String
+  cart        Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId   String
+  productName String  @default("")
+  productBrand String @default("")
+  quantity    Int
+  unitPrice   Decimal @db.Decimal(10, 2)
+  subtotal    Decimal @db.Decimal(10, 2)
+  requiresPrescription Boolean @default(false)
+
+  @@index([cartId])
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+model Banner {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  imageUrl  String?
+  linkUrl   String?
+  bgColor   String   @default("#CD0301")
+  textColor String   @default("#FFFFFF")
+  position  String   @default("home_hero")
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([position, active])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  userName  String?
+  action    String
+  entity    String?
+  entityId  String?
+  details   String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model ProductRelation {
+  id               String   @id @default(cuid())
+  productId        String
+  productName      String   @default("")
+  relatedProductId String
+  relatedName      String   @default("")
+  type             String   @default("CROSS_SELL")
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+
+  @@index([productId])
+}
+
+model ProductOverride {
+  id        String   @id @default(cuid())
+  ean       String   @unique
+  catSlug   String
+  catName   String
+  subSlug   String?
+  subName   String?
+  updatedAt DateTime @updatedAt
+
+  @@index([catSlug])
+}
+
+model CustomCategory {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  icon      String   @default("📦")
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  isCustom  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CustomSubcategory {
+  id        String   @id @default(cuid())
+  catSlug   String
+  slug      String
+  name      String
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  isCustom  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([catSlug, slug])
+  @@index([catSlug])
+}
+
+// Cadernos de oferta do ERP permitidos no delivery.
+// Se um preço final vem de um caderno NÃO permitido (allowed=false),
+// o app ignora essa promoção e usa o preço base (precovenda).
+model AllowedCaderno {
+  cadernoId    String   @id
+  name         String   @default("")
+  allowed      Boolean  @default(true)
+  productCount Int      @default(0)
+  updatedAt    DateTime @updatedAt @default(now())
+}
+
+model RelationRule {
+  id           String   @id @default(cuid())
+  name         String   @default("")
+  type         String   @default("CROSS_SELL")
+  triggerType  String   @default("PRODUCT")
+  triggerValue String   @default("")
+  triggerLabel String   @default("")
+  targetType   String   @default("PRODUCT")
+  targetValue  String   @default("")
+  targetLabel  String   @default("")
+  targetLimit  Int      @default(4)
+  order        Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([triggerType, triggerValue])
+  @@index([active])
+}
+
+model ProductImage {
+  id               String   @id @default(cuid())
+  ean              String   @unique
+  cloudStoragePath String
+  isPublic         Boolean  @default(true)
+  updatedAt        DateTime @updatedAt
+}
+
+model Neighborhood {
+  id          String   @id @default(cuid())
+  nome        String   @unique
+  variacoes   String[] @default([])
+  taxa        Decimal  @db.Decimal(10, 2) @default(0)
+  minimo      Decimal  @db.Decimal(10, 2) @default(0)
+  freteGratis Decimal? @db.Decimal(10, 2)
+  prazo       String?
+  atendido    Boolean  @default(true)
+  ativo       Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([ativo])
+}

@@ -1,0 +1,9 @@
+{
+  "mip": "https://abacusai-apps-ce94bf63b2e635ab3c6b0ce6-us-west-2.s3.us-west-2.amazonaws.com/66886/public/templates/mip.jpg",
+  "mip-generico": "https://abacusai-apps-ce94bf63b2e635ab3c6b0ce6-us-west-2.s3.us-west-2.amazonaws.com/66886/public/templates/mip-generico.jpg",
+  "controlado": "https://abacusai-apps-ce94bf63b2e635ab3c6b0ce6-us-west-2.s3.us-west-2.amazonaws.com/66886/public/templates/controlado.jpg",
+  "controlado-generico": "https://abacusai-apps-ce94bf63b2e635ab3c6b0ce6-us-west-2.s3.us-west-2.amazonaws.com/66886/public/templates/controlado-generico.jpg",
+  "tarja-vermelha": "https://abacusai-apps-ce94bf63b2e635ab3c6b0ce6-us-west-2.s3.us-west-2.amazonaws.com/66886/public/templates/tarja-vermelha.jpg",
+  "tarja-vermelha-generico": "https://abacusai-apps-ce94bf63b2e635ab3c6b0ce6-us-west-2.s3.us-west-2.amazonaws.com/66886/public/templates/tarja-vermelha-generico.jpg",
+  "nao-medicamento": "https://abacusai-apps-ce94bf63b2e635ab3c6b0ce6-us-west-2.s3.us-west-2.amazonaws.com/66886/public/templates/nao-medicamento.jpg"
+}

@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[data-hydration-error] {
+  display: none !important;
+}
+
+:root {
+  --brand-red: #CD0301;
+  --brand-yellow: #FFBC00;
+  --brand-gray: #BCBCBC;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Hide scrollbar for horizontal scroll sections */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Price formatting */
+.price-old {
+  @apply line-through text-gray-400 text-sm;
+}
+.price-promo {
+  @apply text-[#CD0301] font-bold text-lg;
+}
+
+/* Descrição rica de produto (HTML vindo do catálogo BC) */
+.product-description h2 {
+  @apply text-base font-bold text-[#1A1A1A] mt-4 mb-2;
+}
+.product-description h3 {
+  @apply text-sm font-semibold text-[#1A1A1A] mt-3 mb-1.5;
+}
+.product-description p {
+  @apply text-sm text-[#666666] leading-relaxed mb-2;
+}
+.product-description ul {
+  @apply list-disc pl-5 mb-2 space-y-1;
+}
+.product-description li {
+  @apply text-sm text-[#666666] leading-relaxed;
+}
+.product-description strong {
+  @apply text-[#1A1A1A] font-semibold;
+}
+.product-description h2:first-child {
+  @apply mt-0;
+}
