@@ -36,6 +36,12 @@ export async function GET(req: NextRequest) {
     });
   } catch (error: any) {
     console.error('Products error:', error);
-    return NextResponse.json({ error: 'Erro ao buscar produtos.', debug: String(error?.message ?? error), code: error?.code ?? null }, { status: 500 });
+    const used = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL || '';
+    const diag = {
+      hasSupabaseUrl: !!process.env.SUPABASE_DATABASE_URL,
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+      dbTarget: used ? (used.replace(/\/\/[^@]*@/, '//***@').split('?')[0]) : '(vazio)',
+    };
+    return NextResponse.json({ error: 'Erro ao buscar produtos.', debug: String(error?.message ?? error), code: error?.code ?? null, diag }, { status: 500 });
   }
 }
